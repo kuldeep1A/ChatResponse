@@ -2,22 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
-  runApp(const ChatResponse());
+  runApp(ChangeNotifierProvider(
+    create: (context) => DarkModeProvider(),
+    child: const ChatResponse(),
+  ));
+}
+
+class DarkModeProvider with ChangeNotifier {
+  bool isDarkMode = true;
+  bool get _isDarkMode => isDarkMode;
+
+  void toggleDarkMode() {
+    isDarkMode = !isDarkMode;
+    notifyListeners();
+  }
 }
 
 class ChatResponse extends StatelessWidget {
   const ChatResponse({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Chat Response',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+            brightness: context.watch<DarkModeProvider>()._isDarkMode
+                ? Brightness.dark
+                : Brightness.light,
+            seedColor: const Color.fromARGB(255, 171, 222, 244)),
         useMaterial3: true,
       ),
       home: const ChatScreen(title: 'Chat Response'),
@@ -37,7 +54,19 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(
+        title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: context.watch<DarkModeProvider>()._isDarkMode
+                ? const Icon(Icons.light_mode)
+                : const Icon(Icons.dark_mode),
+            onPressed: () {
+              context.read<DarkModeProvider>().toggleDarkMode();
+            },
+          )
+        ],
+      ),
       body: const ChatWidget(),
     );
   }
