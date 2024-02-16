@@ -47,10 +47,5 @@ test
 macos
 ios
 linux
-windows
 .env
-web
-android
 .metadata
-analysis_options.yaml
-pubspec.lock

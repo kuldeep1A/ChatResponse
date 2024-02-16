@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -226,7 +227,18 @@ class MessageWidget extends StatelessWidget {
         Flexible(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 600),
-            decoration: const BoxDecoration(),
+            decoration: BoxDecoration(
+              color: isFromUser
+                  ? Theme.of(context).colorScheme.secondaryContainer
+                  : Theme.of(context).colorScheme.surfaceVariant,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            padding: const EdgeInsets.symmetric(
+              vertical: 15,
+              horizontal: 20,
+            ),
+            margin: const EdgeInsets.only(bottom: 8),
+            child: MarkdownBody(data: text),
           ),
         )
       ],
